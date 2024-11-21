@@ -1,0 +1,7 @@
+
+body{
+    padding: 20px 0 20px;
+    --pico-form-element-spacing-vertical:0.368rem;
+    --pico-form-element-placeholder-color: #474747;
+    --pico-font-size : 1rem
+}
