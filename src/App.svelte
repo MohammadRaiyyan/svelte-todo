@@ -1,151 +1,78 @@
 <script lang="ts">
-  import type { Filter, Task } from "./types/task";
+  import "./app.css";
+  import type { Filter, Status, Task } from "./types/task";
   import TaskForm from "./lib/TaskForm.svelte";
   import Tasks from "./lib/Tasks.svelte";
   import ZeroState from "./lib/ZeroState.svelte";
-  import { localStore } from "./lib/services/localStore.svelte";
+  import { getTodosContext, setTodosContext } from "./lib/store/Todos.svelte";
+  import ViewTask from "./lib/ViewTask.svelte";
+  import * as Select from "$lib/components/ui/select/index";
+  import { BeakerIcon, Funnel, LucidePencil, Pencil, PencilIcon } from "@lucide/svelte";
+  import { taskStatusOptions } from "$lib/constants";
+  import Button from "$lib/components/ui/button/button.svelte";
+  setTodosContext();
 
-  let tasks = localStore<Task[]>("tasks", []);
-  let createTask = $state(false);
+  const todos = getTodosContext();
 
-  let currentFilter = $state<Filter>("all");
-  let doneTaskCount = $derived(
-    tasks.value.reduce((acc, curr) => acc + Number(curr.status === "Done"), 0)
+  $inspect(todos.getTasks());
+
+  const doneTaskCount = $derived(
+    todos.getTasks().reduce((acc, curr) => acc + Number(curr.status === "done"), 0)
   );
-  let filteredTasks = $derived.by(() => {
-    switch (currentFilter) {
-      case "all":
-        return tasks.value;
-      case "done":
-        return tasks.value.filter((task) => task.status === "Done");
-      case "todo":
-        return tasks.value.filter((task) => task.status === "Todo");
-      default:
-        return tasks.value;
-    }
-  });
-
-  function handleDone(task: Task) {
-    task.status = task.status === "Done" ? "Todo" : "Done";
-  }
-
-  function handleRemove(id: string) {
-    const index = tasks.value.findIndex((task) => task.id === id);
-    tasks.value.splice(index, 1);
-  }
-
-  function addTask(task: Task) {
-    tasks.value.push(task);
-    createTask = false;
-  }
-  function handleUpdate(task: Task) {
-    tasks.value = tasks.value.map((t: Task) => {
-      if (t.id === task.id) {
-        return task;
-      }
-      return t;
-    });
-  }
-  function handleClose() {
-    createTask = false;
-  }
+  const taskCount = $derived(todos.size());
 </script>
 
-<main class="container">
-  <article class="header-nav">
-    <header class="nav">
-      <div>Svelte Task</div>
-      <button aria-label="Add task" onclick={() => (createTask = true)}>
-        <svg
-          fill="none"
-          height="24"
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M0 0h24v24H0z" fill="none" stroke="none" />
-          <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-          <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-          <path d="M16 5l3 3" />
-        </svg>
-      </button>
-    </header>
-  </article>
-  <TaskForm {addTask} isOpen={createTask} {handleClose} {handleUpdate} />
-  <section class="task-container">
-    {#if tasks.value.length > 0}
-      <div class="header">
-        <div role="group">
-          <button class="filter" onclick={() => (currentFilter = "all")}>All</button>
-          <button class="filter secondary" onclick={() => (currentFilter = "todo")}>Todo</button>
-          <button class="filter secondary" onclick={() => (currentFilter = "done")}>Done</button>
-        </div>
-        <p class="task-done-count">
-          <span>{doneTaskCount}</span> / <span>{tasks.value.length}</span> tasks completed
-        </p>
+<main class="space-y-8">
+  <header class="sticky top-0 z-50 flex h-16 items-center bg-muted">
+    <nav class="container mx-auto flex max-w-5xl items-center justify-between px-3 md:px-6">
+      <h2 class="text-xl font-semibold">DayFlow</h2>
+      <Button
+        variant="default"
+        aria-label="Add task"
+        onclick={() => todos.setShowTaskModal(true, "create", null)}
+      >
+        <LucidePencil /> Create Task
+      </Button>
+    </nav>
+  </header>
+  <section class="container mx-auto max-w-5xl space-y-8 px-3 md:px-6">
+    {#if taskCount > 0}
+      <div class="flex items-center justify-between">
+        <Select.Root type="single" name="filter" bind:value={todos.filter}>
+          <Select.Trigger class="w-[180px] bg-muted">
+            <div class="flex items-center gap-2">
+              <Funnel size={16} />
+              {taskStatusOptions.find((f) => f.value === todos.filter)?.label || "Filter"}
+            </div>
+          </Select.Trigger>
+          <Select.Content>
+            <Select.Group>
+              <Select.GroupHeading>Status</Select.GroupHeading>
+              {#each taskStatusOptions as option (option.value)}
+                <Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
+              {/each}
+            </Select.Group>
+          </Select.Content>
+        </Select.Root>
       </div>
-      <div class="tasks">
-        <Tasks
-          {handleUpdate}
-          filter={currentFilter}
-          tasks={filteredTasks}
-          {handleDone}
-          {handleRemove}
-        />
+      <div class="flex flex-col space-y-4">
+        <Tasks filter={todos.filter} tasks={todos.getTasks()} handleAction={todos.handleAction} />
       </div>
     {:else}
       <ZeroState />
     {/if}
   </section>
+  <section class="container mx-auto max-w-5xl">
+    <TaskForm
+      action={todos.showTaskModal.type}
+      handleAction={todos.handleAction}
+      isOpen={todos.showTaskModal.show && todos.showTaskModal.type !== "view"}
+      task={todos.showTaskModal.task}
+    />
+    <ViewTask
+      isOpen={todos.showTaskModal.show && todos.showTaskModal.type === "view"}
+      task={todos.showTaskModal.task}
+      handleClose={() => todos.setShowTaskModal(false, "close", null)}
+    />
+  </section>
 </main>
-
-<style>
-  .container {
-    max-width: 600px;
-    height: calc(100vh - 20px);
-    overflow: hidden;
-  }
-
-  .header-nav {
-    padding-bottom: 0;
-  }
-
-  .nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0;
-  }
-
-  .nav button {
-    width: max-content;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-  }
-
-  .filter {
-    width: max-content;
-  }
-
-  .task-container {
-    height: calc(100vh - 62px);
-    overflow-y: hidden;
-  }
-
-  .tasks {
-    height: calc(100vh - 140px);
-    overflow-y: auto;
-    padding-bottom: 80px;
-  }
-
-  .task-done-count {
-    font-size: 0.775rem;
-    text-align: end;
-  }
-</style>

@@ -26,3 +26,4 @@ class LocalStore<T> {
 export function localStore<T>(key: string, value: T) {
   return new LocalStore(key, value);
 }
+export type LocalStoreType<T> = LocalStore<T>;
