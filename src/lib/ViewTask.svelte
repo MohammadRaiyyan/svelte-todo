@@ -12,8 +12,10 @@
 
 {#if task}
   <Dialog.Root open={isOpen} onOpenChange={() => handleClose()}>
-    <Dialog.Content class="max-w-[95%] overflow-hidden rounded-lg p-0 md:max-w-[600px]">
-      <Dialog.Header class="flex flex-row items-center justify-between bg-muted px-3 py-4 md:px-6">
+    <Dialog.Content class="max-w-[95%] overflow-hidden rounded-xl  p-0 md:max-w-[600px]">
+      <Dialog.Header
+        class="flex flex-row items-center justify-between border-b bg-muted px-3 py-4 md:px-6"
+      >
         <Dialog.Title>{task?.title}</Dialog.Title>
         <Dialog.Close aria-label="Close" onclick={() => handleClose()}>
           <X />

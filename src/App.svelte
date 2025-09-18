@@ -1,78 +1,38 @@
 <script lang="ts">
   import "./app.css";
-  import type { Filter, Status, Task } from "./types/task";
-  import TaskForm from "./lib/TaskForm.svelte";
   import Tasks from "./lib/Tasks.svelte";
-  import ZeroState from "./lib/ZeroState.svelte";
-  import { getTodosContext, setTodosContext } from "./lib/store/Todos.svelte";
-  import ViewTask from "./lib/ViewTask.svelte";
-  import * as Select from "$lib/components/ui/select/index";
-  import { BeakerIcon, Funnel, LucidePencil, Pencil, PencilIcon } from "@lucide/svelte";
-  import { taskStatusOptions } from "$lib/constants";
-  import Button from "$lib/components/ui/button/button.svelte";
-  setTodosContext();
-
-  const todos = getTodosContext();
-
-  $inspect(todos.getTasks());
-
-  const doneTaskCount = $derived(
-    todos.getTasks().reduce((acc, curr) => acc + Number(curr.status === "done"), 0)
-  );
-  const taskCount = $derived(todos.size());
+  import { Grid2x2, List } from "@lucide/svelte";
+  import { ToggleGroup, ToggleGroupItem } from "$lib/components/ui/toggle-group";
+  import Navbar from "$lib/components/common/Navbar.svelte";
+  import { Tabs, TabsList, TabsContent, TabsTrigger } from "$lib/components/ui/tabs";
+  import Notes from "$lib/Notes.svelte";
+  import NoteForm from "$lib/NoteForm.svelte";
 </script>
 
-<main class="space-y-8">
-  <header class="sticky top-0 z-50 flex h-16 items-center bg-muted">
-    <nav class="container mx-auto flex max-w-5xl items-center justify-between px-3 md:px-6">
-      <h2 class="text-xl font-semibold">DayFlow</h2>
-      <Button
-        variant="default"
-        aria-label="Add task"
-        onclick={() => todos.setShowTaskModal(true, "create", null)}
-      >
-        <LucidePencil /> Create Task
-      </Button>
-    </nav>
-  </header>
-  <section class="container mx-auto max-w-5xl space-y-8 px-3 md:px-6">
-    {#if taskCount > 0}
-      <div class="flex items-center justify-between">
-        <Select.Root type="single" name="filter" bind:value={todos.filter}>
-          <Select.Trigger class="w-[180px] bg-muted">
-            <div class="flex items-center gap-2">
-              <Funnel size={16} />
-              {taskStatusOptions.find((f) => f.value === todos.filter)?.label || "Filter"}
-            </div>
-          </Select.Trigger>
-          <Select.Content>
-            <Select.Group>
-              <Select.GroupHeading>Status</Select.GroupHeading>
-              {#each taskStatusOptions as option (option.value)}
-                <Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
-              {/each}
-            </Select.Group>
-          </Select.Content>
-        </Select.Root>
+<div class="space-y-8">
+  <!--  Navbar Start-->
+  <Navbar />
+  <!--  Navbar End-->
+  <main class="container mx-auto max-w-full px-3 md:max-w-[80%] md:px-6">
+    <!--  Entity Toggle Start-->
+    <Tabs value="tasks" class="space-y-8">
+      <div class="flex items-center justify-between gap-3">
+        <TabsList>
+          <TabsTrigger value="tasks">Tasks</TabsTrigger>
+          <TabsTrigger value="notes">Notes</TabsTrigger>
+        </TabsList>
+        <ToggleGroup type="single" value="list" variant="default">
+          <ToggleGroupItem size="sm" value="grid"><Grid2x2 /></ToggleGroupItem>
+          <ToggleGroupItem size="sm" value="list"><List /></ToggleGroupItem>
+        </ToggleGroup>
       </div>
-      <div class="flex flex-col space-y-4">
-        <Tasks filter={todos.filter} tasks={todos.getTasks()} handleAction={todos.handleAction} />
-      </div>
-    {:else}
-      <ZeroState />
-    {/if}
-  </section>
-  <section class="container mx-auto max-w-5xl">
-    <TaskForm
-      action={todos.showTaskModal.type}
-      handleAction={todos.handleAction}
-      isOpen={todos.showTaskModal.show && todos.showTaskModal.type !== "view"}
-      task={todos.showTaskModal.task}
-    />
-    <ViewTask
-      isOpen={todos.showTaskModal.show && todos.showTaskModal.type === "view"}
-      task={todos.showTaskModal.task}
-      handleClose={() => todos.setShowTaskModal(false, "close", null)}
-    />
-  </section>
-</main>
+      <TabsContent value="tasks">
+        <Tasks />
+      </TabsContent>
+      <TabsContent value="notes">
+        <!--        <Notes />-->
+      </TabsContent>
+    </Tabs>
+    <!--  Entity Toggle End-->
+  </main>
+</div>
