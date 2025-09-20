@@ -5,7 +5,7 @@ export type Task = {
   status: Status;
   priority: Priority;
   createdAt: Date;
-  dueAt?: Date;
+  dueAt?: string;
 };
 
 export type Note = {

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -15,8 +15,8 @@
     --card-foreground: 0 0% 3.9%;
     --border: 0 0% 82.8%;
     --input: 0 0% 82.8%;
-      --primary: 247.88 68% 51%;
-      --primary-foreground: 0 0% 100%;
+    --primary: 247.88 68% 51%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 92.1%;
     --secondary-foreground: 0 0% 9%;
     --accent: 0 0% 92.1%;
@@ -70,10 +70,41 @@
   * {
     @apply border-border;
   }
-    html{
-        font-family: "Plus Jakarta Sans",system-ui, sans-serif;
-}
+  html {
+    font-family: "Inter", system-ui, sans-serif;
+  }
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.done {
+  @apply bg-green-500/10 text-green-500;
+}
+.in-progress {
+  @apply bg-orange-500/10 text-orange-500;
+}
+.todo {
+  @apply bg-muted text-muted-foreground;
+}
+.done-text {
+  @apply text-green-500;
+}
+.in-progress-text {
+  @apply text-orange-500;
+}
+.todo-text {
+  @apply text-muted-foreground;
+}
+.low {
+  @apply text-primary;
+}
+.normal {
+  @apply text-accent-foreground;
+}
+.medium {
+  @apply text-orange-500;
+}
+.heigh {
+  @apply text-red-500;
 }

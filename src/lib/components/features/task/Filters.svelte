@@ -1,18 +1,18 @@
 <script>
-  import * as Popover from "$lib/components/ui/popover/index";
+  import { Button } from "$lib/components/ui/button/index";
+  import { Label } from "$lib/components/ui/label/index";
+  import * as Popover from "$lib/components/ui/popover";
+  import * as Select from "$lib/components/ui/select";
   import { taskPriorityOptions, taskSortOptions, taskStatusOptions } from "$lib/constants/index";
-  import { ChevronsUpDownIcon, Flag, ListFilterPlus } from "@lucide/svelte";
-  import * as Select from "$lib/components/ui/select/index";
   import { getTodosContext } from "$lib/store/Todos.svelte";
-  import { Button } from "$lib/components/ui/button";
-  import { Label } from "$lib/components/ui/label";
+  import { ChevronsUpDownIcon, Flag, ListFilterPlus } from "@lucide/svelte";
 
   const todos = getTodosContext();
 </script>
 
 <Popover.Root>
   <Popover.Trigger>
-    <Button variant="outline" class="bg-muted" size="sm">
+    <Button variant="outline" size="sm">
       <ListFilterPlus size="16" />
     </Button>
   </Popover.Trigger>
@@ -21,7 +21,7 @@
     <div class="space-y-2">
       <Label for="status">Status</Label>
       <Select.Root type="single" name="status" bind:value={todos.filter.status}>
-        <Select.Trigger id="status" class="w-full bg-muted">
+        <Select.Trigger id="status" class="w-full">
           <div class="flex items-center gap-2">
             <ListFilterPlus size="16" />
             {taskStatusOptions.find((f) => f.value === todos.filter.status)?.label || "All Status"}
@@ -40,7 +40,7 @@
     <div class="space-y-2">
       <Label for="priority">Priority</Label>
       <Select.Root type="single" name="priority" bind:value={todos.filter.priority}>
-        <Select.Trigger id="priority" class="w-full bg-muted">
+        <Select.Trigger id="priority" class="w-full">
           <div class="flex items-center gap-2">
             <Flag size="16" />
             {taskPriorityOptions.find((f) => f.value === todos.filter.priority)?.label ||
@@ -62,7 +62,7 @@
     <div class="space-y-2">
       <Label for="sortBy">Sort By</Label>
       <Select.Root type="single" name="sortBy" bind:value={todos.sort}>
-        <Select.Trigger id="sortBy" class="w-full bg-muted">
+        <Select.Trigger id="sortBy" class="w-full">
           <div class="flex items-center gap-2 pr-2">
             <ChevronsUpDownIcon size={16} />
             {taskSortOptions.find((f) => f.value === todos.sort)?.label || "Sort by"}

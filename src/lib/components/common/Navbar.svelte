@@ -9,11 +9,9 @@
     DropdownMenuContent,
   } from "../ui/dropdown-menu";
   import { getNotesContext, setNotesContext } from "$lib/store/Notes.svelte";
-  setTodosContext();
-  // setNotesContext();
 
   const todos = getTodosContext();
-  // const notes = getNotesContext();
+  const notes = getNotesContext();
 </script>
 
 <header class="sticky top-0 z-50 flex h-16 items-center border-b bg-muted">
@@ -35,9 +33,9 @@
         <DropdownMenuItem onclick={() => todos.setShowTaskModal(true, "create", null)}
           >Task</DropdownMenuItem
         >
-        <!--        <DropdownMenuItem onclick={() => notes.setShowNoteModal(true, "create", null)}-->
-        <!--          >Note</DropdownMenuItem-->
-        <!--        >-->
+        <DropdownMenuItem onclick={() => notes.setShowNoteModal(true, "create", null)}
+          >Note</DropdownMenuItem
+        >
       </DropdownMenuContent>
     </DropdownMenu>
   </nav>

@@ -1,12 +1,18 @@
 <script lang="ts">
   import "./app.css";
-  import Tasks from "./lib/Tasks.svelte";
+  import Tasks from "$lib/components/features/task/Tasks.svelte";
   import { Grid2x2, List } from "@lucide/svelte";
   import { ToggleGroup, ToggleGroupItem } from "$lib/components/ui/toggle-group";
   import Navbar from "$lib/components/common/Navbar.svelte";
   import { Tabs, TabsList, TabsContent, TabsTrigger } from "$lib/components/ui/tabs";
-  import Notes from "$lib/Notes.svelte";
-  import NoteForm from "$lib/NoteForm.svelte";
+  import Notes from "$lib/components/features/notes/Notes.svelte";
+  import NoteForm from "$lib/components/features/notes/NoteForm.svelte";
+  import { setTodosContext } from "$lib/store/Todos.svelte";
+  import { setNotesContext } from "$lib/store/Notes.svelte";
+  import TaskForm from "$lib/components/features/task/TaskForm.svelte";
+
+  setTodosContext();
+  setNotesContext();
 </script>
 
 <div class="space-y-8">
@@ -30,9 +36,11 @@
         <Tasks />
       </TabsContent>
       <TabsContent value="notes">
-        <!--        <Notes />-->
+        <Notes />
       </TabsContent>
     </Tabs>
     <!--  Entity Toggle End-->
   </main>
+  <NoteForm />
+  <TaskForm />
 </div>

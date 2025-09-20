@@ -1,6 +1,6 @@
 <script lang="ts" module>
-  import { getContext, setContext } from "svelte";
   import type { ToggleVariants } from "$lib/components/ui/toggle/index.js";
+  import { getContext, setContext } from "svelte";
   export function setToggleGroupCtx(props: ToggleVariants) {
     setContext("toggleGroup", props);
   }
@@ -11,8 +11,8 @@
 </script>
 
 <script lang="ts">
-  import { ToggleGroup as ToggleGroupPrimitive } from "bits-ui";
   import { cn } from "$lib/utils.js";
+  import { ToggleGroup as ToggleGroupPrimitive } from "bits-ui";
 
   let {
     ref = $bindable(null),
@@ -36,6 +36,6 @@ get along, so we shut typescript up by casting `value` to `never`.
 <ToggleGroupPrimitive.Root
   bind:value={value as never}
   bind:ref
-  class={cn("flex h-10 items-center justify-center rounded-xl border bg-muted p-1", className)}
+  class={cn("flex h-10 items-center justify-center rounded-xl border p-1", className)}
   {...restProps}
 />

@@ -1,18 +1,13 @@
 import { getContext, setContext } from "svelte";
 import type { Action, Filter, Priority, SortBy, Status, Task } from "../../types/task";
-import { localStore } from "../services/localStore.svelte";
 import type { LocalStoreType } from "../services/localStore.svelte";
+import { localStore } from "../services/localStore.svelte";
 
 interface TodosType {
   todos: LocalStoreType<Task[]>;
-
-  show: boolean;
-  type: Action;
-
-  task: Task | null;
-
   filter: Filter;
   sort: SortBy;
+  noteModalState: { show: boolean; type: Action; task: Task | null };
 
   addTodo(task: Task): void;
   updateTodo(id: string, task: Task): void;
@@ -32,16 +27,16 @@ interface TodosType {
 
 class Todos implements TodosType {
   todos = localStore<Task[]>("todos", []);
-
-  show = $state<boolean>(false);
-  type = $state<Action>("create");
-  task = $state<Task | null>(null);
-
   filter = $state<Filter>({
     status: "all",
     priority: "all",
   });
   sort = $state<SortBy>("status");
+  noteModalState = $state<{ show: boolean; type: Action; task: Task | null }>({
+    show: false,
+    type: "create",
+    task: null,
+  });
 
   addTodo = (task: Task) => {
     this.todos.value.push(task);
@@ -93,10 +88,9 @@ class Todos implements TodosType {
   };
 
   setShowTaskModal = (value: boolean, type: Action, task: Task | null = null) => {
-    console.log(value, type, task);
-    this.show = value;
-    this.type = type;
-    this.task = task;
+    this.noteModalState.show = value;
+    this.noteModalState.type = type;
+    this.noteModalState.task = task;
   };
   handleAction = (action: Action, task?: Task) => {
     if (action === "remove") this.removeTodo(task!.id);
@@ -124,4 +118,4 @@ function getTodosContext() {
   return getContext<TodosType>(TODOS_KEY);
 }
 
-export { setTodosContext, getTodosContext };
+export { getTodosContext, setTodosContext };

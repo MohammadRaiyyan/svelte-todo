@@ -1,17 +1,16 @@
 <script lang="ts">
-  import type { Note } from "../types/task";
-  import * as Dialog from "$lib/components/ui/dialog/index.js";
-  import Button from "./components/ui/button/button.svelte";
-  import Label from "./components/ui/label/label.svelte";
-  import Textarea from "./components/ui/textarea/textarea.svelte";
-  import Input from "./components/ui/input/input.svelte";
+  import type { Note } from "../../../../types/task";
+  import * as Dialog from "$lib/components/ui/dialog";
+  import Button from "../../ui/button/button.svelte";
+  import Label from "../../ui/label/label.svelte";
+  import Textarea from "../../ui/textarea/textarea.svelte";
+  import Input from "../../ui/input/input.svelte";
   import { X, Plus } from "@lucide/svelte";
-  import * as Select from "$lib/components/ui/select/index";
+  import * as Select from "$lib/components/ui/select";
   import { getNotesContext, setNotesContext } from "$lib/store/Notes.svelte";
-  setNotesContext();
-  const notes = getNotesContext();
-  $inspect("from notes form", notes.showNoteModal);
+  import RichTextEditor from "$lib/components/common/RichTextEditor.svelte";
 
+  const { noteModalState, handleAction } = getNotesContext();
   let getDefaultState = (): Note => ({
     title: "",
     content: "",
@@ -23,17 +22,14 @@
   let noteState = $state<Note>(getDefaultState());
   let hasError = $state<{ title: boolean } | null>(null);
 
-  const isOpen = $derived(notes.showNoteModal.show);
-  const note = $derived(notes.showNoteModal.note);
-  const action = $derived(notes.showNoteModal.type);
-  const handleAction = $derived(notes.handleAction);
-
-  let dialogTitle: string = $derived(action === "edit" ? "Update note" : "Add note");
+  let dialogTitle: string = $derived(
+    noteModalState.type === "edit" ? "Update note" : "Create note"
+  );
 
   $effect(() => {
-    if (action === "edit" && note) {
+    if (noteModalState.type === "edit" && noteModalState.note) {
       noteState = {
-        ...note,
+        ...noteModalState.note,
       };
       dialogTitle = "Update note";
     }
@@ -49,7 +45,7 @@
       };
       return;
     }
-    if (action === "edit") {
+    if (noteModalState.type === "edit") {
       handleAction("update", noteState as Note);
       noteState = getDefaultState();
       return;
@@ -66,7 +62,7 @@
   }
 </script>
 
-<Dialog.Root open={isOpen} onOpenChange={handleClose}>
+<Dialog.Root open={noteModalState.show} onOpenChange={handleClose}>
   <Dialog.Content class="max-w-[95%] overflow-hidden rounded-xl p-0 md:max-w-[600px]">
     <Dialog.Header
       class="flex flex-row items-center justify-between border-b bg-muted px-3 py-4 md:px-6"
@@ -93,12 +89,17 @@
 
       <div class="space-y-2">
         <Label for="description">Description</Label>
-        <Textarea
-          aria-describedby="note-content"
-          bind:value={noteState.content}
-          id="description"
+        <!--        <Textarea-->
+        <!--          aria-describedby="note-content"-->
+        <!--          bind:value={}-->
+        <!--          id="description"-->
+        <!--          placeholder="Write note description"-->
+        <!--          rows={4}-->
+        <!--        />-->
+        <RichTextEditor
           placeholder="Write note description"
-          rows={4}
+          editable
+          bind:value={noteState.content}
         />
       </div>
       <div class="submit flex w-full items-center justify-end gap-3">

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { Task } from "../types/task";
-  import * as Dialog from "$lib/components/ui/dialog/index.js";
+  import type { Task } from "../../../../types/task";
+  import * as Dialog from "$lib/components/ui/dialog";
   import { X } from "@lucide/svelte";
 
   const {

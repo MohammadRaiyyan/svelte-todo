@@ -6,7 +6,7 @@ const NOTES_KEY = Symbol("_notes_key");
 
 interface NotesType {
   notes: LocalStoreType<Note[]>;
-  showNoteModal: { show: boolean; type: Action; note: Note | null };
+  noteModalState: { show: boolean; type: Action; note: Note | null };
 
   addNote(note: Note): void;
   removeNote(id: string): void;
@@ -24,7 +24,7 @@ interface NotesType {
 class Notes implements NotesType {
   notes: LocalStoreType<Note[]> = localStore<Note[]>("notes", []);
 
-  showNoteModal = $state<{ show: boolean; type: Action; note: Note | null }>({
+  noteModalState = $state<{ show: boolean; type: Action; note: Note | null }>({
     show: false,
     type: "create",
     note: null,
@@ -50,9 +50,9 @@ class Notes implements NotesType {
 
   setShowNoteModal = (value: boolean, type: Action, note: Note | null = null) => {
     // console.log(value, type, note);
-    this.showNoteModal.show = value;
-    this.showNoteModal.type = type;
-    this.showNoteModal.note = note;
+    this.noteModalState.show = value;
+    this.noteModalState.type = type;
+    this.noteModalState.note = note;
   };
   handleAction = (action: Action, note?: Note) => {
     if (action === "remove") this.removeNote(note!.id);
