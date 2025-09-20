@@ -1,30 +1,42 @@
 import { getContext, setContext } from "svelte";
-import type { Action, Filter, Task } from "../../types/task";
-import { localStore } from "../services/localStore.svelte";
+import type { Action, Filter, Priority, SortBy, Status, Task } from "../../types/task";
 import type { LocalStoreType } from "../services/localStore.svelte";
+import { localStore } from "../services/localStore.svelte";
 
 interface TodosType {
   todos: LocalStoreType<Task[]>;
-  showTaskModal: { show: boolean; type: Action; task: Task | null };
   filter: Filter;
+  sort: SortBy;
+  noteModalState: { show: boolean; type: Action; task: Task | null };
+
   addTodo(task: Task): void;
-  removeTodo(id: string): void;
   updateTodo(id: string, task: Task): void;
+  removeTodo(id: string): void;
+
   setFilter(filter: Filter): void;
   getTasks(): Task[];
+
   setShowTaskModal(value: boolean, type: Action, task: Task | null): void;
+
   handleAction(action: Action, task?: Task): void;
+
   size(): number;
+
+  sortBy(sortBy: SortBy): void;
 }
 
 class Todos implements TodosType {
   todos = localStore<Task[]>("todos", []);
-  showTaskModal = $state<{ show: boolean; type: Action; task: Task | null }>({
+  filter = $state<Filter>({
+    status: "all",
+    priority: "all",
+  });
+  sort = $state<SortBy>("status");
+  noteModalState = $state<{ show: boolean; type: Action; task: Task | null }>({
     show: false,
     type: "create",
     task: null,
   });
-  filter = $state<Filter>("all");
 
   addTodo = (task: Task) => {
     this.todos.value.push(task);
@@ -40,19 +52,45 @@ class Todos implements TodosType {
     this.setShowTaskModal(false, "edit", null);
   };
 
-  setFilter = (filter: Filter) => {
-    this.filter = filter;
+  setFilter = (filter: Partial<Filter>) => {
+    this.filter = { ...this.filter, ...filter };
   };
   getTasks = () => {
-    if (this.filter === "all") return this.todos.value;
-    return this.todos.value.filter((task) => task.status === this.filter);
+    let tasks = [...this.todos.value];
+
+    if (tasks.length === 0) {
+      return tasks;
+    }
+
+    // 1️⃣ Filter
+    if (this.filter.status !== "all") {
+      tasks = tasks.filter((task: Task) => task.status === this.filter.status);
+    }
+
+    if (this.filter.priority !== "all") {
+      tasks = tasks.filter((task: Task) => task.priority === this.filter.priority);
+    }
+
+    // 2️⃣ Sort
+    if (this.sort === "title") {
+      tasks.sort((a: Task, b: Task) => a.title.toLowerCase().localeCompare(b.title.toLowerCase()));
+    } else if (this.sort === "status") {
+      const order: Record<Status, number> = { todo: 1, "in-progress": 2, done: 3 };
+      tasks.sort((a: Task, b: Task) => order[a.status] - order[b.status]);
+    } else if (this.sort === "createdAt") {
+      tasks.sort((a: Task, b: Task) => b.createdAt.getTime() - a.createdAt.getTime());
+    } else if (this.sort === "priority") {
+      const order: Record<Priority, number> = { Low: 1, Normal: 2, Medium: 3, High: 4 };
+      tasks.sort((a: Task, b: Task) => order[a.priority] - order[b.priority]);
+    }
+
+    return tasks;
   };
 
   setShowTaskModal = (value: boolean, type: Action, task: Task | null = null) => {
-    console.log(value, type, task);
-    this.showTaskModal.show = value;
-    this.showTaskModal.type = type;
-    this.showTaskModal.task = task;
+    this.noteModalState.show = value;
+    this.noteModalState.type = type;
+    this.noteModalState.task = task;
   };
   handleAction = (action: Action, task?: Task) => {
     if (action === "remove") this.removeTodo(task!.id);
@@ -61,12 +99,15 @@ class Todos implements TodosType {
     else if (action === "create") this.addTodo(task!);
     else if (action === "close") this.setShowTaskModal(false, "create", null);
     else if (action === "update") this.updateTodo(task!.id, task!);
-    else this.updateTodo(task!.id, task!);
   };
   size = () => {
     return this.todos.value.length;
   };
+  sortBy(sort: SortBy) {
+    this.sort = sort;
+  }
 }
+
 const TODOS_KEY = Symbol("_todos_key");
 
 function setTodosContext() {
@@ -77,4 +118,4 @@ function getTodosContext() {
   return getContext<TodosType>(TODOS_KEY);
 }
 
-export { setTodosContext, getTodosContext };
+export { getTodosContext, setTodosContext };

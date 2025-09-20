@@ -1,0 +1,12 @@
+<script lang="ts">
+  import { cn } from "$lib/utils.js";
+  import { Tabs as TabsPrimitive } from "bits-ui";
+
+  let { ref = $bindable(null), class: className, ...restProps }: TabsPrimitive.ListProps = $props();
+</script>
+
+<TabsPrimitive.List
+  bind:ref
+  class={cn("inline-flex h-10 items-center justify-center rounded-xl border p-1", className)}
+  {...restProps}
+/>
