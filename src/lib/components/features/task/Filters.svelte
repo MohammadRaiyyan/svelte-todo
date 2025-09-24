@@ -8,10 +8,11 @@
   import { ChevronsUpDownIcon, Flag, ListFilterPlus } from "@lucide/svelte";
 
   const todos = getTodosContext();
+  const taskCount = $derived(todos.size());
 </script>
 
 <Popover.Root>
-  <Popover.Trigger>
+  <Popover.Trigger disabled={taskCount < 1}>
     <Button variant="outline" size="sm">
       <ListFilterPlus size="16" />
     </Button>
@@ -29,7 +30,6 @@
         </Select.Trigger>
         <Select.Content>
           <Select.Group>
-            <Select.GroupHeading>Status</Select.GroupHeading>
             {#each taskStatusOptions as option (option.value)}
               <Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
             {/each}
@@ -49,7 +49,6 @@
         </Select.Trigger>
         <Select.Content>
           <Select.Group>
-            <Select.GroupHeading>Priority</Select.GroupHeading>
             <Select.Item value={"all"} label={"All"}>All</Select.Item>
 
             {#each taskPriorityOptions as option (option.value)}
@@ -70,8 +69,6 @@
         </Select.Trigger>
         <Select.Content class="w-max">
           <Select.Group>
-            <Select.GroupHeading>Sort By</Select.GroupHeading>
-
             {#each taskSortOptions as option (option.value)}
               <Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
             {/each}

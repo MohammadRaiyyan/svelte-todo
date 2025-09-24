@@ -1,14 +1,13 @@
 <script lang="ts">
-  import Button from "../ui/button/button.svelte";
-  import { PencilLine, ChevronDown } from "@lucide/svelte";
-  import { getTodosContext, setTodosContext } from "../../store/Todos.svelte";
+  import { getNotesContext } from "$lib/store/Notes.svelte";
+  import { ChevronDown, PenBoxIcon } from "@lucide/svelte";
+  import { getTodosContext } from "../../store/Todos.svelte";
   import {
     DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuItem,
     DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
   } from "../ui/dropdown-menu";
-  import { getNotesContext, setNotesContext } from "$lib/store/Notes.svelte";
 
   const todos = getTodosContext();
   const notes = getNotesContext();
@@ -16,14 +15,16 @@
 
 <header class="sticky top-0 z-50 flex h-16 items-center border-b bg-muted">
   <nav
-    class="container mx-auto flex max-w-full items-center justify-between px-3 md:max-w-[80%] md:px-6"
+    class="container mx-auto flex max-w-full items-center justify-between px-3 md:max-w-[60%] md:px-6"
   >
     <h2 class="text-xl font-semibold">FlowBoard</h2>
     <DropdownMenu>
-      <DropdownMenuTrigger class="h-10 w-[132px] rounded-xl border-primary bg-primary">
+      <DropdownMenuTrigger
+        class="h-10 w-[132px] rounded border-primary bg-primary text-primary-foreground"
+      >
         <div class="flex items-center gap-2 text-sm">
           <div class="flex items-center gap-2 border-r border-primary-foreground/50 px-3 py-2">
-            <PencilLine size={16} />
+            <PenBoxIcon size={16} />
             Create
           </div>
           <div class="w-max pr-3"><ChevronDown size={16} class="opacity-50" /></div>

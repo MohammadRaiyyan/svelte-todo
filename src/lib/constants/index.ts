@@ -1,9 +1,8 @@
 import type { Option, Priority, SortBy, Status } from "../../types/task";
-import type { Filter } from "@lucide/svelte";
 
 export const taskStatusOptions: Option<Status | "all">[] = [
-  { value: "all", label: "All", color: "indigo", sort: 0 },
-  { value: "todo", label: "Todo", color: "indigo", sort: 1 },
+  { value: "all", label: "All", color: "blue", sort: 0 },
+  { value: "todo", label: "Todo", color: "blue", sort: 1 },
   { value: "done", label: "Done", color: "green", sort: 2 },
   { value: "in-progress", label: "In Progress", color: "orange", sort: 3 },
 ];

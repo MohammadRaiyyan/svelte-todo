@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { cn } from "$lib/utils.js";
   import type { WithElementRef, WithoutChildren } from "bits-ui";
   import type { HTMLTextareaAttributes } from "svelte/elements";
-  import { cn } from "$lib/utils.js";
 
   let {
     ref = $bindable(null),
@@ -14,7 +14,7 @@
 <textarea
   bind:this={ref}
   class={cn(
-    "focus-visible:ring-offset-none flex min-h-[80px] w-full rounded-xl border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+    "focus-visible:ring-offset-none flex min-h-[80px] w-full rounded border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
     className
   )}
   bind:value

@@ -4,7 +4,7 @@
   import { type VariantProps, tv } from "tailwind-variants";
 
   export const buttonVariants = tv({
-    base: "ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl  font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+    base: "ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center gap-2 whitespace-nowrap rounded  font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
@@ -16,8 +16,8 @@
       },
       size: {
         default: "h-12 px-4 py-2",
-        sm: "h-10 rounded-xl px-3",
-        lg: "h-14 rounded-xl px-8",
+        sm: "h-10 rounded px-3",
+        lg: "h-14 rounded px-8",
         icon: "h-10 w-10",
       },
     },

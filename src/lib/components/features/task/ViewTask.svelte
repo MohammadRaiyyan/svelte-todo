@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { Task } from "../../../../types/task";
   import * as Dialog from "$lib/components/ui/dialog";
   import { X } from "@lucide/svelte";
+  import type { Task } from "../../../../types/task";
 
   const {
     task,
@@ -12,7 +12,7 @@
 
 {#if task}
   <Dialog.Root open={isOpen} onOpenChange={() => handleClose()}>
-    <Dialog.Content class="max-w-[95%] overflow-hidden rounded-xl  p-0 md:max-w-[600px]">
+    <Dialog.Content class="max-w-[95%] overflow-hidden rounded  p-0 md:max-w-[600px] ">
       <Dialog.Header
         class="flex flex-row items-center justify-between border-b bg-muted px-3 py-4 md:px-6"
       >

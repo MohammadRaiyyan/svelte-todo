@@ -1,14 +1,13 @@
 <script lang="ts">
-  import type { Note } from "../../../../types/task";
-  import * as Dialog from "$lib/components/ui/dialog";
-  import Button from "../../ui/button/button.svelte";
-  import Label from "../../ui/label/label.svelte";
-  import Textarea from "../../ui/textarea/textarea.svelte";
-  import Input from "../../ui/input/input.svelte";
-  import { X, Plus } from "@lucide/svelte";
-  import * as Select from "$lib/components/ui/select";
-  import { getNotesContext, setNotesContext } from "$lib/store/Notes.svelte";
   import RichTextEditor from "$lib/components/common/RichTextEditor.svelte";
+  import * as Dialog from "$lib/components/ui/dialog";
+  import { getNotesContext } from "$lib/store/Notes.svelte";
+  import { X } from "@lucide/svelte";
+  import { toast } from "svelte-sonner";
+  import type { Note } from "../../../../types/task";
+  import Button from "../../ui/button/button.svelte";
+  import Input from "../../ui/input/input.svelte";
+  import Label from "../../ui/label/label.svelte";
 
   const { noteModalState, handleAction } = getNotesContext();
   let getDefaultState = (): Note => ({
@@ -28,9 +27,7 @@
 
   $effect(() => {
     if (noteModalState.type === "edit" && noteModalState.note) {
-      noteState = {
-        ...noteModalState.note,
-      };
+      noteState = noteModalState.note;
       dialogTitle = "Update note";
     }
   });
@@ -45,6 +42,8 @@
       };
       return;
     }
+    toast.success(`Note has been 
+    ${noteModalState.type === "edit" ? "updated" : "created"} `);
     if (noteModalState.type === "edit") {
       handleAction("update", noteState as Note);
       noteState = getDefaultState();
@@ -60,10 +59,13 @@
     noteState = getDefaultState();
     handleAction("close");
   }
+  function handleChangeDescription(value: string) {
+    noteState.content = value;
+  }
 </script>
 
 <Dialog.Root open={noteModalState.show} onOpenChange={handleClose}>
-  <Dialog.Content class="max-w-[95%] overflow-hidden rounded-xl p-0 md:max-w-[600px]">
+  <Dialog.Content class="max-w-[95%] overflow-hidden rounded p-0 md:max-w-[600px]">
     <Dialog.Header
       class="flex flex-row items-center justify-between border-b bg-muted px-3 py-4 md:px-6"
     >
@@ -99,7 +101,8 @@
         <RichTextEditor
           placeholder="Write note description"
           editable
-          bind:value={noteState.content}
+          value={noteState.content}
+          onChange={handleChangeDescription}
         />
       </div>
       <div class="submit flex w-full items-center justify-end gap-3">
