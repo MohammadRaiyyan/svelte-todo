@@ -29,12 +29,14 @@
 
   let {
     editable = true,
-    value = $bindable(),
+    value,
+    onChange,
     placeholder = "Write something...",
   }: {
     value: string;
     placeholder: string;
     editable: boolean;
+    onChange: (v: string) => void;
   } = $props();
 
   onMount(() => {
@@ -51,12 +53,18 @@
       },
     });
     editor.on("update", ({ editor: ed }) => {
-      value = ed.getHTML();
+      onChange(ed.getHTML());
     });
     return () => {
       editor?.destroy();
       editor = undefined;
     };
+  });
+
+  $effect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value || "");
+    }
   });
 </script>
 
@@ -188,11 +196,11 @@
         </Button>
         <!--        &lt;!&ndash; Color Picker &ndash;&gt;-->
         <!--        <div-->
-        <!--          class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-transparent bg-transparent p-0 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"-->
+        <!--          class="inline-flex h-10 w-10 items-center justify-center rounded border border-transparent bg-transparent p-0 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"-->
         <!--        >-->
         <!--          <input-->
         <!--            type="color"-->
-        <!--            class="h-8 w-8 rounded-md border-transparent"-->
+        <!--            class="h-8 w-8 rounded border-transparent"-->
         <!--            bind:value={chosenColor}-->
         <!--            oninput={() => editor?.chain().focus().setColor(chosenColor).run()}-->
         <!--            title="Color"-->
@@ -215,10 +223,10 @@
 
 <style>
   .editor {
-    @apply overflow-hidden rounded-xl border border-input ring-primary focus-within:ring-2;
+    @apply overflow-hidden rounded border border-input ring-primary focus-within:ring-2;
   }
   .floating-toolbar {
-    @apply absolute -top-14 right-0 z-50 flex max-w-[500px] items-center gap-1 overflow-x-auto rounded-xl border px-2 py-1 shadow-xl;
+    @apply absolute -top-14 right-0 z-50 flex max-w-[500px] items-center gap-1 overflow-x-auto rounded border bg-popover px-2 py-1 shadow-xl;
     transform: translateX(120%);
     opacity: 0;
     transition:
@@ -298,13 +306,13 @@
 
     /* Code and preformatted text styles */
     & code {
-      @apply rounded-sm bg-accent text-accent-foreground;
+      @apply rounded bg-accent text-accent-foreground;
       font-size: 0.85rem;
       padding: 0.25em 0.3em;
     }
 
     & pre {
-      @apply rounded-md bg-accent text-accent-foreground;
+      @apply rounded bg-accent text-accent-foreground;
       font-family: "JetBrainsMono", monospace;
       margin: 1.5rem 0;
       padding: 0.75rem 1rem;

@@ -6,7 +6,7 @@
   import { taskPriorityOptions, taskStatusOptions } from "$lib/constants";
   import { getTodosContext } from "$lib/store/Todos.svelte";
   import { Circle, Flag, X } from "@lucide/svelte";
-  import { onMount } from "svelte";
+  import { toast } from "svelte-sonner";
   import type { Task } from "../../../../types/task";
   import Button from "../../ui/button/button.svelte";
   import Input from "../../ui/input/input.svelte";
@@ -24,11 +24,11 @@
     dueAt: undefined,
   });
 
-  let taskState = $state<Task>();
+  let taskState = $state<Task>(getDefaultState());
   let hasError = $state<{ title: boolean; content: boolean } | null>(null);
   let dialogTitle = $state("Create task");
 
-  onMount(() => {
+  $effect(() => {
     if (noteModalState.type !== "create" && noteModalState.task) {
       taskState = noteModalState.task;
       dialogTitle = "Task Detail";
@@ -51,6 +51,8 @@
       };
       return;
     }
+    toast.success(`Task has been 
+    ${noteModalState.type === "edit" ? "updated" : "created"} `);
     if (noteModalState.type === "edit") {
       handleAction("update", taskState as Task);
       taskState = getDefaultState();
@@ -70,10 +72,14 @@
     const now = new Date();
     return now > new Date(taskState.dueAt);
   });
+
+  function handleDescriptionChange(value: string) {
+    taskState.content = value;
+  }
 </script>
 
 <Dialog.Root open={noteModalState.show} onOpenChange={() => handleClose()}>
-  <Dialog.Content class="max-w-[95%] overflow-hidden rounded-xl p-0 md:max-w-[600px]">
+  <Dialog.Content class="max-w-[95%] overflow-hidden rounded p-0 md:max-w-[600px]">
     <Dialog.Header
       class="flex flex-row items-center justify-between border-b bg-muted px-3 py-4 md:px-6"
     >
@@ -120,7 +126,6 @@
               </Select.Trigger>
               <Select.Content>
                 <Select.Group>
-                  <Select.GroupHeading>Status</Select.GroupHeading>
                   {#each taskStatusOptions.filter((f) => f.value !== "all") as option (option.value)}
                     <Select.Item value={option.value} label={option.label}
                       >{option.label}</Select.Item
@@ -150,7 +155,6 @@
               </Select.Trigger>
               <Select.Content>
                 <Select.Group>
-                  <Select.GroupHeading>Priority</Select.GroupHeading>
                   {#each taskPriorityOptions as option (option.value)}
                     <Select.Item value={option.value} label={option.label}
                       >{option.label}</Select.Item
@@ -180,19 +184,17 @@
           <RichTextEditor
             placeholder="Write task description"
             editable
-            bind:value={taskState.content}
+            value={taskState.content}
+            onChange={handleDescriptionChange}
           />
           {#if hasError?.content}
             <small id="invalid-content"> Description should be greater than 15 characters </small>
           {/if}
         </div>
 
-        <!-- Submit Button -->
-        {#if noteModalState.type === "create"}
-          <div class="submit flex w-full items-center justify-end gap-3">
-            <Button type="submit" size="sm" class="w-32">Create Task</Button>
-          </div>
-        {/if}
+        <div class="submit flex w-full items-center justify-end gap-3">
+          <Button type="submit" size="sm" class="w-32">Create Task</Button>
+        </div>
       </form>
     {:else}
       <div class="p-6 text-center">No task data available</div>

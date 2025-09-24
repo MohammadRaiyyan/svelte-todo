@@ -1,7 +1,6 @@
 <script lang="ts">
   import { cn } from "$lib/utils";
   import { Calendar, ChevronLeft, ChevronRight, Info } from "@lucide/svelte";
-  import { onMount } from "svelte";
   import Button from "../ui/button/button.svelte";
   import * as Select from "../ui/select";
   import * as Tooltip from "../ui/tooltip";
@@ -220,7 +219,7 @@
   }
 
   // ---------------- Lifecycle ----------------
-  onMount(() => {
+  $effect(() => {
     if (value) selectedDate = new Date(value)?.toDateString();
 
     const minYear = minDate ? minDate.getFullYear() : currentDate.getFullYear() - 100;

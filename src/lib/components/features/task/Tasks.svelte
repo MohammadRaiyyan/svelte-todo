@@ -12,8 +12,10 @@
 
 <section class="space-y-4">
   <div class="flex items-center justify-between gap-4">
-    <h2>Tasks</h2>
-    <Filters />
+    <h2 class="text-lg font-medium">Tasks ({taskCount})</h2>
+    {#if taskCount > 0}
+      <Filters />
+    {/if}
   </div>
   {#if taskCount > 0}
     <div class="space-y-4">

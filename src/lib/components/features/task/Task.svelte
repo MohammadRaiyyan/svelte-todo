@@ -19,6 +19,7 @@
     const now = new Date();
     return now > new Date(task.dueAt);
   });
+  $inspect("task", task);
 </script>
 
 <div transition:fade>
@@ -43,7 +44,6 @@
       </Select.Trigger>
       <Select.Content>
         <Select.Group>
-          <Select.GroupHeading>Status</Select.GroupHeading>
           {#each taskStatusOptions.slice(1) as option (option.value)}
             <Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
           {/each}
@@ -64,7 +64,7 @@
 
           <Card.Title
             class="cursor-pointer text-base"
-            onclick={() => todos.handleAction("view", task)}>{task.title}</Card.Title
+            onclick={() => todos.handleAction("edit", task)}>{task.title}</Card.Title
           >
           <!--              <Card.Description class="line-clamp-2 truncate text-base"-->
           <!--                >{task.content}</Card.Description-->
@@ -72,7 +72,7 @@
         </div>
         <div class="flex items-center gap-3 md:w-1/3 md:justify-end">
           <Select.Root bind:value={task.priority} name="priority" type="single">
-            <Select.Trigger class="flex h-8 w-40 items-center gap-2 rounded-xl ">
+            <Select.Trigger class="flex h-8 w-40 items-center gap-2 rounded ">
               <div
                 class:heigh={task.priority === "High"}
                 class:low={task.priority === "Low"}
@@ -86,7 +86,6 @@
             </Select.Trigger>
             <Select.Content>
               <Select.Group>
-                <Select.GroupHeading>Priority</Select.GroupHeading>
                 {#each taskPriorityOptions.slice(0) as option (option.value)}
                   <Select.Item value={option.value} label={option.label}>{option.label}</Select.Item
                   >
